@@ -7,8 +7,8 @@ import jakarta.validation.Valid;
 import m7.graduatework.entity.user.PasswordDTO;
 import m7.graduatework.entity.user.UserDTO;
 import m7.graduatework.service.UserService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,48 +30,39 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Пароль обновлен"),
             @ApiResponse(responseCode = "401", description = "Нет авторизации"),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
-            @ApiResponse(responseCode = "404", description = "Данные не найдены")
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<PasswordDTO> setPassword(@RequestBody @Valid PasswordDTO passwordDTO) {
         return ResponseEntity.of(userService.setUserPassword(passwordDTO));
     }
 
     @GetMapping("/me")
-    @Operation(summary = "Получить данные пользователя")
+    @Operation(summary = "Получить информацию об авторизованном пользователе")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Данные получены"),
-            @ApiResponse(responseCode = "401", description = "Нет авторизации"),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
-            @ApiResponse(responseCode = "404", description = "Данные не найдены")
+            @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<UserDTO> getUser() {
         return ResponseEntity.of(userService.getUser());
     }
 
     @PatchMapping("/me")
-    @Operation(summary = "Обновить данные пользователя")
+    @Operation(summary = "Обновить информацию об авторизованном пользователе")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Данные обновлены"),
-            @ApiResponse(responseCode = "204", description = "Данные обновлены"),
-            @ApiResponse(responseCode = "401", description = "Нет авторизации"),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
-            @ApiResponse(responseCode = "404", description = "Данные не найдены")
+            @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserDTO userDTO) {
         return ResponseEntity.of(userService.updateUser(userDTO));
     }
 
-    @PatchMapping("/me/image")
-    @Operation(summary = "Изменить изображение пользователя")
+    @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "\n" +
+            "Обновить аватар авторизованного пользователя")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Изображение изменено"),
-            @ApiResponse(responseCode = "404", description = "Данные не найдены")
+            @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<UserDTO> updateUserImage(@RequestParam MultipartFile image) {
         return ResponseEntity.of(userService.updateUserImage(image));
     }

@@ -1,6 +1,12 @@
 package m7.graduatework.service.impl;
 
-import m7.graduatework.entity.ads.*;
+import m7.graduatework.entity.ads.AdDTO;
+import m7.graduatework.entity.ads.AdsDTO;
+import m7.graduatework.entity.ads.FullAdDTO;
+import m7.graduatework.entity.ads.UpdateAdsDTO;
+import m7.graduatework.entity.coments.CommentDTO;
+import m7.graduatework.entity.coments.CommentTextDTO;
+import m7.graduatework.entity.coments.CommentsDTO;
 import m7.graduatework.service.AdsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,18 +22,13 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public Optional<CommentDTO> addComment(String adPk, CommentDTO commentDTO) {
+    public Optional<CommentDTO> addComment(String adPk, CommentTextDTO commentTextDTO) {
         return Optional.of(new CommentDTO());
     }
 
     @Override
     public Optional<CommentsDTO> getComments(String ad_pk) {
         return Optional.of(new CommentsDTO());
-    }
-
-    @Override
-    public Optional<CommentDTO> getComments(String adPk, Long id) {
-        return Optional.of(new CommentDTO());
     }
 
     @Override
@@ -41,7 +42,7 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public Optional<AdDTO> addAds(AdDTO adDTO) {
+    public Optional<AdDTO> addAds(AdDTO adDTO, MultipartFile image) {
         return Optional.of(new AdDTO());
     }
 
