@@ -1,4 +1,4 @@
-package m7.graduatework.entity.ads;
+package m7.graduatework.entity.coments;
 
 import lombok.Data;
 
