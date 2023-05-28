@@ -12,14 +12,12 @@ import m7.graduatework.entity.coments.CommentTextDTO;
 import m7.graduatework.entity.coments.CommentsDTO;
 import m7.graduatework.service.AdsService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping
 @CrossOrigin(value = "http://localhost:3000")
-@EnableMethodSecurity
 @Validated
 @Tag(name = "Комментарии", description = "CRUD комментариев, Secured")
 public class CommentController {
