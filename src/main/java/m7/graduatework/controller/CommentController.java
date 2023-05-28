@@ -16,7 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/ads")
 @CrossOrigin(value = "http://localhost:3000")
 @Validated
 @Tag(name = "Комментарии", description = "CRUD комментариев, Secured")
@@ -29,7 +29,7 @@ public class CommentController {
     }
 
 
-    @GetMapping("/ads/{id}/comments")
+    @GetMapping("/{id}/comments")
     @Operation(summary = "Получить комментарии к товару")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Данные получены"),
@@ -39,7 +39,7 @@ public class CommentController {
         return ResponseEntity.of(adsService.getComments(adId));
     }
 
-    @PostMapping("/ads/{id}/comments")
+    @PostMapping("/{id}/comments")
     @Operation(summary = "Добавить комментарий к объявлению")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Комментарий добавлен"),
@@ -51,7 +51,7 @@ public class CommentController {
     }
 
 
-    @DeleteMapping("/ads/{adId}/comments/{id}")
+    @DeleteMapping("/{adId}/comments/{id}")
     @Operation(summary = "Удалить комментарий")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Комментарий удален"),
@@ -65,7 +65,7 @@ public class CommentController {
                 : ResponseEntity.notFound().build();
     }
 
-    @PatchMapping("/ads/{adId}/comments/{id}")
+    @PatchMapping("/{adId}/comments/{id}")
     @Operation(summary = "Обновить комментарий")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Комментарий обновлен"),
