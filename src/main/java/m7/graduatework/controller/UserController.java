@@ -9,14 +9,12 @@ import m7.graduatework.entity.user.UserDTO;
 import m7.graduatework.service.UserService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(value = "http://localhost:3000")
-@EnableMethodSecurity
 public class UserController {
 
     private final UserService userService;

@@ -9,15 +9,13 @@ import m7.graduatework.entity.user.UserRegisterDTO;
 import m7.graduatework.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 @CrossOrigin(value = "http://localhost:3000")
-@EnableMethodSecurity
+@RestController
 public class AuthorizationController {
 
     private final UserService userService;
@@ -51,6 +49,6 @@ public class AuthorizationController {
     public ResponseEntity<Void> login(@RequestBody @Valid UserLoginDTO userLoginDTO) {
         return userService.login(userLoginDTO)
                 ? ResponseEntity.ok().build()
-                : ResponseEntity.notFound().build();
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 }

@@ -16,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +28,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping
 @CrossOrigin(value = "http://localhost:3000")
-@EnableMethodSecurity
 @Validated
 @Tag(name = "Объявления", description = "CRUD объявлений, Secured")
 public class AdsController {
