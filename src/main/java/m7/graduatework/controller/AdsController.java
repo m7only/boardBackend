@@ -26,7 +26,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 @RestController
-@RequestMapping
+@RequestMapping("/ads")
 @CrossOrigin(value = "http://localhost:3000")
 @Validated
 @Tag(name = "Объявления", description = "CRUD объявлений, Secured")
@@ -38,7 +38,7 @@ public class AdsController {
         this.adsService = adsService;
     }
 
-    @GetMapping("/ads")
+    @GetMapping
     @Operation(summary = "Получить все объявления")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Результат запроса получен")
@@ -48,7 +48,6 @@ public class AdsController {
     }
 
     @PostMapping(
-            value = "/ads",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -70,7 +69,7 @@ public class AdsController {
                         .build());
     }
 
-    @GetMapping("/ads/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = "Получить полные данные объявления")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Данные получены"),
@@ -80,7 +79,7 @@ public class AdsController {
         return ResponseEntity.of(adsService.getFullAd(id));
     }
 
-    @DeleteMapping("/ads/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "Удалить объявление")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Объявление удалено"),
@@ -92,7 +91,7 @@ public class AdsController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/ads/{id}")
+    @PatchMapping("/{id}")
     @Operation(summary = "Обновить объявление")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Объявление обновлено"),
@@ -105,7 +104,7 @@ public class AdsController {
         return ResponseEntity.of(adsService.updateAds(id, updateAdsDTO));
     }
 
-    @GetMapping("/ads/me")
+    @GetMapping("/me")
     @Operation(summary = "Получить объявления авторизованного пользователя")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Объявления получены"),
