@@ -1,4 +1,4 @@
-package m7.graduatework.entity.user;
+package m7.graduatework.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 
 @Data
 @Validated
-public class UserDTO {
+public class UserDto {
     private Long id;
     @Email
     private String email;

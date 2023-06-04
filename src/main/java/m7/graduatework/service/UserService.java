@@ -1,23 +1,28 @@
 package m7.graduatework.service;
 
-import m7.graduatework.entity.user.PasswordDTO;
-import m7.graduatework.entity.user.UserDTO;
-import m7.graduatework.entity.user.UserLoginDTO;
-import m7.graduatework.entity.user.UserRegisterDTO;
+import m7.graduatework.dto.user.PasswordDto;
+import m7.graduatework.dto.user.UserDto;
+import m7.graduatework.dto.user.UserLoginDto;
+import m7.graduatework.dto.user.UserRegisterDto;
+import m7.graduatework.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
 public interface UserService {
-    Optional<PasswordDTO> setUserPassword(PasswordDTO passwordDTO);
+    User findByUsername(String username);
 
-    Optional<UserDTO> getUser();
+    boolean setUserPassword(PasswordDto passwordDto);
 
-    Optional<UserDTO> updateUser(UserDTO userDTO);
+    Optional<UserDto> getCurrentUserDto();
 
-    Optional<UserDTO> updateUserImage(MultipartFile image);
+    User getCurrentUser();
 
-    UserDTO register(UserRegisterDTO userRegisterDTO);
+    Optional<UserDto> updateUser(UserDto userDto);
 
-    boolean login(UserLoginDTO userLoginDTO);
+    Optional<UserDto> updateUserImage(MultipartFile image);
+
+    User register(UserRegisterDto userRegisterDto);
+
+    boolean login(UserLoginDto userLoginDto);
 }

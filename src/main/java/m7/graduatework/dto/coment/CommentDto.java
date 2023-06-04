@@ -1,11 +1,11 @@
-package m7.graduatework.entity.coments;
+package m7.graduatework.dto.coment;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class CommentDTO {
+public class CommentDto {
     @NotNull
     private Long author;
     private String authorImage;

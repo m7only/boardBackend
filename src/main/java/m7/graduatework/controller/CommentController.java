@@ -7,10 +7,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import m7.graduatework.entity.coments.CommentDTO;
-import m7.graduatework.entity.coments.CommentTextDTO;
-import m7.graduatework.entity.coments.CommentsDTO;
-import m7.graduatework.service.AdsService;
+import m7.graduatework.dto.coment.CommentDto;
+import m7.graduatework.dto.coment.CommentTextDto;
+import m7.graduatework.dto.coment.CommentsDto;
+import m7.graduatework.service.CommentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +22,11 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Комментарии", description = "CRUD комментариев, Secured")
 public class CommentController {
 
-    private final AdsService adsService;
+    private final CommentService commentService;
 
-    public CommentController(AdsService adsService) {
-        this.adsService = adsService;
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
     }
-
 
     @GetMapping("/{id}/comments")
     @Operation(summary = "Получить комментарии к товару")
@@ -35,8 +34,8 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "Данные получены"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
-    public ResponseEntity<CommentsDTO> getComments(@PathVariable(value = "id") @NotEmpty String adId) {
-        return ResponseEntity.of(adsService.getComments(adId));
+    public ResponseEntity<CommentsDto> getComments(@PathVariable(value = "id") @NotEmpty Long adId) {
+        return ResponseEntity.of(commentService.getComments(adId));
     }
 
     @PostMapping("/{id}/comments")
@@ -45,9 +44,9 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "Комментарий добавлен"),
             @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
-    public ResponseEntity<CommentDTO> addComment(@PathVariable(value = "id") @NotEmpty String adId,
-                                                 @RequestBody @Valid CommentTextDTO commentTextDTO) {
-        return ResponseEntity.of(adsService.addComment(adId, commentTextDTO));
+    public ResponseEntity<CommentDto> addComment(@PathVariable(value = "id") @NotEmpty Long adId,
+                                                 @RequestBody @Valid CommentTextDto commentTextDto) {
+        return ResponseEntity.of(commentService.addComment(adId, commentTextDto));
     }
 
 
@@ -58,9 +57,9 @@ public class CommentController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации"),
             @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
-    public ResponseEntity<Void> deleteComments(@PathVariable(value = "adId") @NotEmpty String adId,
-                                               @PathVariable @NotNull Long id) {
-        return adsService.deleteComments(adId, id)
+    public ResponseEntity<Void> deleteComment(@PathVariable(value = "adId") @NotEmpty Long adId,
+                                              @PathVariable @NotNull Long id) {
+        return commentService.deleteComment(adId, id) != null
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.notFound().build();
     }
@@ -72,9 +71,9 @@ public class CommentController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации"),
             @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
-    public ResponseEntity<CommentDTO> updateComments(@PathVariable(value = "adId") @NotEmpty String adId,
-                                                     @PathVariable @NotNull Long id,
-                                                     @RequestBody @Valid CommentDTO commentDTO) {
-        return ResponseEntity.of(adsService.updateComments(adId, id, commentDTO));
+    public ResponseEntity<CommentDto> updateComment(@PathVariable(value = "adId") @NotEmpty Long adId,
+                                                    @PathVariable @NotNull Long id,
+                                                    @RequestBody @Valid CommentDto commentDto) {
+        return ResponseEntity.of(commentService.updateComment(adId, id, commentDto));
     }
 }

@@ -1,8 +1,8 @@
-package m7.graduatework.entity.coments;
+package m7.graduatework.dto.coment;
 
 import jakarta.validation.constraints.NotEmpty;
 
-public class CommentTextDTO {
+public class CommentTextDto {
     @NotEmpty
     private String text;
 }

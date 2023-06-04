@@ -1,9 +1,9 @@
-package m7.graduatework.entity.user;
+package m7.graduatework.dto.user;
 
 import lombok.Data;
 
 @Data
-public class UserLoginDTO {
+public class UserLoginDto {
     private String username;
     private String password;
 }

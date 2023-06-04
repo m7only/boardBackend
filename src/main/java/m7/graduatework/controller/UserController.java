@@ -4,9 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import m7.graduatework.entity.user.PasswordDTO;
-import m7.graduatework.entity.user.UserDTO;
+import m7.graduatework.dto.user.PasswordDto;
+import m7.graduatework.dto.user.UserDto;
 import m7.graduatework.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +31,10 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации"),
             @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
-    public ResponseEntity<PasswordDTO> setPassword(@RequestBody @Valid PasswordDTO passwordDTO) {
-        return ResponseEntity.of(userService.setUserPassword(passwordDTO));
+    public ResponseEntity<PasswordDto> setPassword(@RequestBody @Valid PasswordDto passwordDTO) {
+        return userService.setUserPassword(passwordDTO)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/me")
@@ -40,8 +43,8 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Данные получены"),
             @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
-    public ResponseEntity<UserDTO> getUser() {
-        return ResponseEntity.of(userService.getUser());
+    public ResponseEntity<UserDto> getUser() {
+        return ResponseEntity.of(userService.getCurrentUserDto());
     }
 
     @PatchMapping("/me")
@@ -50,18 +53,17 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Данные обновлены"),
             @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
-    public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserDTO userDTO) {
+    public ResponseEntity<UserDto> updateUser(@RequestBody @Valid UserDto userDTO) {
         return ResponseEntity.of(userService.updateUser(userDTO));
     }
 
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "\n" +
-            "Обновить аватар авторизованного пользователя")
+    @Operation(summary = "Обновить аватар авторизованного пользователя")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Изображение изменено"),
             @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
-    public ResponseEntity<UserDTO> updateUserImage(@RequestParam MultipartFile image) {
+    public ResponseEntity<UserDto> updateUserImage(@RequestParam MultipartFile image) {
         return ResponseEntity.of(userService.updateUserImage(image));
     }
 }
