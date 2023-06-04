@@ -1,12 +1,9 @@
-package m7.graduatework.entity.ads;
+package m7.graduatework.dto.ad;
 
 import lombok.Data;
-import m7.graduatework.entity.image.Image;
-
-import java.util.List;
 
 @Data
-public class FullAdDTO {
+public class FullAdDto {
     private Long pk;
     private Integer price;
     private String authorFirstName;
@@ -15,5 +12,5 @@ public class FullAdDTO {
     private String email;
     private String phone;
     private String title;
-    private List<Image> image;
+    private String image;
 }

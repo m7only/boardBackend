@@ -1,73 +1,90 @@
 package m7.graduatework.service.impl;
 
-import m7.graduatework.entity.ads.AdDTO;
-import m7.graduatework.entity.ads.AdsDTO;
-import m7.graduatework.entity.ads.FullAdDTO;
-import m7.graduatework.entity.ads.UpdateAdsDTO;
-import m7.graduatework.entity.coments.CommentDTO;
-import m7.graduatework.entity.coments.CommentTextDTO;
-import m7.graduatework.entity.coments.CommentsDTO;
+import m7.graduatework.dto.ad.AdDto;
+import m7.graduatework.dto.ad.AdsDto;
+import m7.graduatework.dto.ad.CreateOrUpdateAdDto;
+import m7.graduatework.dto.ad.FullAdDto;
+import m7.graduatework.entity.Ad;
+import m7.graduatework.mapper.AdDtoMapper;
+import m7.graduatework.mapper.CreateOrUpdateAdsDTOMapper;
+import m7.graduatework.mapper.FullAdDtoMapper;
+import m7.graduatework.repository.AdRepository;
 import m7.graduatework.service.AdsService;
+import m7.graduatework.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AdsServiceImpl implements AdsService {
+
+    private final CreateOrUpdateAdsDTOMapper createOrUpdateAdsDtoMapper;
+    private final AdDtoMapper adDtoMapper;
+    private final FullAdDtoMapper fullAdDtoMapper;
+    private final AdRepository adRepository;
+    private final UserService userService;
+
+    public AdsServiceImpl(CreateOrUpdateAdsDTOMapper createOrUpdateAdsDtoMapper, AdRepository adRepository, UserService userService, AdDtoMapper adDtoMapper, FullAdDtoMapper fullAdDtoMapper) {
+        this.createOrUpdateAdsDtoMapper = createOrUpdateAdsDtoMapper;
+        this.adRepository = adRepository;
+        this.userService = userService;
+        this.adDtoMapper = adDtoMapper;
+        this.fullAdDtoMapper = fullAdDtoMapper;
+    }
+
     @Override
     public Path updateAdsImage(Long id, MultipartFile image) {
         return Path.of("/");
     }
 
     @Override
-    public Optional<CommentDTO> addComment(String adPk, CommentTextDTO commentTextDTO) {
-        return Optional.of(new CommentDTO());
+    public Optional<AdDto> addAds(CreateOrUpdateAdDto properties, MultipartFile image) {
+        Ad ad = createOrUpdateAdsDtoMapper.toEntity(properties);
+        ad.setAuthor(userService.getCurrentUser());
+        return Optional.of(adDtoMapper.toDto(adRepository.save(ad)));
     }
 
     @Override
-    public Optional<CommentsDTO> getComments(String ad_pk) {
-        return Optional.of(new CommentsDTO());
+    public Optional<AdsDto> getAds() {
+        List<Ad> ads = adRepository.findAll();
+        return Optional.of(new AdsDto(ads.size(), adDtoMapper.toDtoList(ads)));
     }
 
     @Override
-    public boolean deleteComments(String adPk, Long id) {
-        return true;
+    public Optional<FullAdDto> getFullAd(Long id) {
+        return Optional.ofNullable(fullAdDtoMapper.toDto(getAdById(id)));
     }
 
     @Override
-    public Optional<CommentDTO> updateComments(String adPk, Long id, CommentDTO commentDTO) {
-        return Optional.of(new CommentDTO());
-    }
-
-    @Override
-    public Optional<AdDTO> addAds(AdDTO adDTO, MultipartFile image) {
-        return Optional.of(new AdDTO());
-    }
-
-    @Override
-    public Optional<AdsDTO> getAds() {
-        return Optional.of(new AdsDTO());
-    }
-
-    @Override
-    public Optional<FullAdDTO> getFullAd(Long id) {
-        return Optional.of(new FullAdDTO());
+    public Ad getAdById(Long id) {
+        return adRepository.findById(id).orElse(null);
     }
 
     @Override
     public Long removeAds(Long id) {
-        return 0L;
+        if (adRepository.findById(id).isPresent()) {
+            return adRepository.removeById(id);
+        }
+        return null;
     }
 
     @Override
-    public Optional<AdsDTO> updateAds(Long id, UpdateAdsDTO updateAdsDTO) {
-        return Optional.of(new AdsDTO());
+    public Optional<AdDto> updateAd(Long id, CreateOrUpdateAdDto createOrUpdateAdDTO) {
+        Optional<Ad> optionalAd = adRepository.findById(id);
+        if (optionalAd.isEmpty()) {
+            return Optional.empty();
+        }
+        Ad ad = optionalAd.get();
+        createOrUpdateAdsDtoMapper.updateEntityFromDto(createOrUpdateAdDTO, ad);
+        return Optional.of(adDtoMapper.toDto(adRepository.save(ad)));
     }
 
     @Override
-    public Optional<AdsDTO> getAdsMe() {
-        return Optional.of(new AdsDTO());
+    public Optional<AdsDto> getAdsMe() {
+        List<Ad> ads = adRepository.findByAuthor(userService.getCurrentUser());
+        return Optional.of(new AdsDto(ads.size(), adDtoMapper.toDtoList(ads)));
     }
 }
