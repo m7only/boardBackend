@@ -100,10 +100,5 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         return passwordEncoder.matches(userLoginDTO.getPassword(), optionalUser.get().getPassword());
-//        return userRepository
-//                .findByUsernameAndPassword(
-//                        userLoginDTO.getUsername(),
-//                        userLoginDTO.getPassword())
-//                .isPresent();
     }
 }

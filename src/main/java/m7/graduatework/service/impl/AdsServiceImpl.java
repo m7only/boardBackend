@@ -27,7 +27,11 @@ public class AdsServiceImpl implements AdsService {
     private final AdRepository adRepository;
     private final UserService userService;
 
-    public AdsServiceImpl(CreateOrUpdateAdsDTOMapper createOrUpdateAdsDtoMapper, AdRepository adRepository, UserService userService, AdDtoMapper adDtoMapper, FullAdDtoMapper fullAdDtoMapper) {
+    public AdsServiceImpl(CreateOrUpdateAdsDTOMapper createOrUpdateAdsDtoMapper,
+                          AdRepository adRepository,
+                          UserService userService,
+                          AdDtoMapper adDtoMapper,
+                          FullAdDtoMapper fullAdDtoMapper) {
         this.createOrUpdateAdsDtoMapper = createOrUpdateAdsDtoMapper;
         this.adRepository = adRepository;
         this.userService = userService;

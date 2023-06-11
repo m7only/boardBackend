@@ -22,7 +22,10 @@ public class CommentServiceImpl implements CommentService {
     private final CommentTextDtoMapper commentTextDtoMapper;
     private final CommentDtoMapper commentDtoMapper;
 
-    public CommentServiceImpl(CommentRepository commentRepository, CommentTextDtoMapper commentTextDtoMapper, AdsService adsService, CommentDtoMapper commentDtoMapper) {
+    public CommentServiceImpl(CommentRepository commentRepository,
+                              CommentTextDtoMapper commentTextDtoMapper,
+                              AdsService adsService,
+                              CommentDtoMapper commentDtoMapper) {
         this.commentRepository = commentRepository;
         this.commentTextDtoMapper = commentTextDtoMapper;
         this.adsService = adsService;
