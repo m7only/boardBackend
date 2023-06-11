@@ -54,6 +54,7 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public AdsDto getAds() {
         List<Ad> ads = adRepository.findAll();
+        ads.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
         return new AdsDto(ads.size(), adDtoMapper.toDtoList(ads));
     }
 
