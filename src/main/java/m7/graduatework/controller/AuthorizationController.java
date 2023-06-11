@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import m7.graduatework.entity.user.UserLoginDTO;
-import m7.graduatework.entity.user.UserRegisterDTO;
+import m7.graduatework.dto.user.UserLoginDto;
+import m7.graduatework.dto.user.UserRegisterDto;
 import m7.graduatework.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class AuthorizationController {
             @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
-    public ResponseEntity<Void> register(@RequestBody @Valid UserRegisterDTO userRegisterDTO) {
+    public ResponseEntity<Void> register(@RequestBody @Valid UserRegisterDto userRegisterDTO) {
         return userService.register(userRegisterDTO) != null
                 ? ResponseEntity.status(HttpStatus.CREATED).build()
                 : ResponseEntity.badRequest().build();
@@ -46,7 +46,7 @@ public class AuthorizationController {
             @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
-    public ResponseEntity<Void> login(@RequestBody @Valid UserLoginDTO userLoginDTO) {
+    public ResponseEntity<Void> login(@RequestBody @Valid UserLoginDto userLoginDTO) {
         return userService.login(userLoginDTO)
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.status(HttpStatus.FORBIDDEN).build();

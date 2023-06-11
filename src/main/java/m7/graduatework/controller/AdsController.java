@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import m7.graduatework.entity.ads.AdDTO;
-import m7.graduatework.entity.ads.AdsDTO;
-import m7.graduatework.entity.ads.FullAdDTO;
-import m7.graduatework.entity.ads.UpdateAdsDTO;
+import m7.graduatework.dto.ad.AdDto;
+import m7.graduatework.dto.ad.AdsDto;
+import m7.graduatework.dto.ad.CreateOrUpdateAdDto;
+import m7.graduatework.dto.ad.FullAdDto;
 import m7.graduatework.service.AdsService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/ads")
@@ -43,7 +42,7 @@ public class AdsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Результат запроса получен")
     })
-    public ResponseEntity<AdsDTO> getAds() {
+    public ResponseEntity<AdsDto> getAds() {
         return ResponseEntity.of(adsService.getAds());
     }
 
@@ -58,10 +57,10 @@ public class AdsController {
             @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
-    public ResponseEntity<AdDTO> addAds(@RequestPart(value = "properties") @Valid AdDTO adDTO,
+    public ResponseEntity<AdDto> addAds(@RequestPart(value = "properties") @Valid CreateOrUpdateAdDto properties,
                                         @RequestPart(value = "image") MultipartFile image) {
-        Optional<AdDTO> optionalAdsDTO = adsService.addAds(adDTO, image);
-        return optionalAdsDTO.map(dto -> ResponseEntity
+        return adsService.addAds(properties, image)
+                .map(dto -> ResponseEntity
                         .status(HttpStatus.CREATED)
                         .body(dto))
                 .orElseGet(() -> ResponseEntity
@@ -75,7 +74,7 @@ public class AdsController {
             @ApiResponse(responseCode = "201", description = "Данные получены"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
-    public ResponseEntity<FullAdDTO> getFullAd(@PathVariable @NotNull Long id) {
+    public ResponseEntity<FullAdDto> getFullAd(@PathVariable @NotNull Long id) {
         return ResponseEntity.of(adsService.getFullAd(id));
     }
 
@@ -86,9 +85,10 @@ public class AdsController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации"),
             @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
     })
-    public ResponseEntity<Void> removeAds(@PathVariable @NotNull Long id) {
-        adsService.removeAds(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> removeAd(@PathVariable @NotNull Long id) {
+        return adsService.removeAds(id) != null
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @PatchMapping("/{id}")
@@ -99,9 +99,9 @@ public class AdsController {
             @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
-    public ResponseEntity<AdsDTO> updateAds(@PathVariable @NotNull Long id,
-                                            @RequestBody @Valid UpdateAdsDTO updateAdsDTO) {
-        return ResponseEntity.of(adsService.updateAds(id, updateAdsDTO));
+    public ResponseEntity<AdDto> updateAd(@PathVariable @NotNull Long id,
+                                          @RequestBody @Valid CreateOrUpdateAdDto createOrUpdateAdDTO) {
+        return ResponseEntity.of(adsService.updateAd(id, createOrUpdateAdDTO));
     }
 
     @GetMapping("/me")
@@ -110,7 +110,7 @@ public class AdsController {
             @ApiResponse(responseCode = "200", description = "Объявления получены"),
             @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
-    public ResponseEntity<AdsDTO> getAdsMe() {
+    public ResponseEntity<AdsDto> getAdsMe() {
         return ResponseEntity.of(adsService.getAdsMe());
     }
 

@@ -1,16 +1,15 @@
 package m7.graduatework.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
@@ -19,18 +18,23 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @CrossOrigin(value = "http://localhost:3000")
 public class WebSecurityConfig {
 
-    private static final String [] PERMIT_ALL ={
-        "/swagger-resources/**",
-        "/swagger-ui.html",
-        "/v3/api-docs",
-        "/webjars/**",
-        "/login",
-        "/register"
-};
-    private static final String [] PERMIT_AUTHENTICATED ={
+    private static final String[] PERMIT_ALL = {
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/v3/api-docs",
+            "/webjars/**",
+            "/login",
+            "/register"
+    };
+    private static final String[] PERMIT_AUTHENTICATED = {
             "/ads/**",
             "/users/**"
     };
+    private final UserDetailsService userDetailsService;
+
+    public WebSecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,27 +44,19 @@ public class WebSecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(PERMIT_ALL).permitAll()
+                                .requestMatchers(PERMIT_ALL).permitAll()
+                                .requestMatchers(PERMIT_AUTHENTICATED).permitAll()
 //                        .requestMatchers(PERMIT_AUTHENTICATED).authenticated()
-                        .anyRequest().permitAll()
+                                .anyRequest().permitAll()
                 );
 
         return http.build();
     }
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("user@gmail.com")
-                .password("password")
-                .passwordEncoder((plainText) -> passwordEncoder().encode(plainText))
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Autowired
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(NoOpPasswordEncoder.getInstance());
     }
 }
