@@ -46,6 +46,16 @@ public class AdsController {
         return ResponseEntity.ofNullable(adsService.getAds());
     }
 
+    @GetMapping("/search/{q}")
+    @Operation(summary = "Поиск по заголовку объявления")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Объявление добавлено"),
+            @ApiResponse(responseCode = "404", description = "Данные не найдены")
+    })
+    public ResponseEntity<AdsDto> findAdsByTitle(@PathVariable String q) {
+        return ResponseEntity.ofNullable(adsService.findAdsByTitle(q));
+    }
+
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE

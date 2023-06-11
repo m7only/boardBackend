@@ -26,4 +26,6 @@ public interface AdsService {
     Optional<AdDto> updateAd(Long id, CreateOrUpdateAdDto createOrUpdateAdDto);
 
     AdsDto getAdsMe();
+
+    AdsDto findAdsByTitle(String q);
 }

@@ -93,4 +93,10 @@ public class AdsServiceImpl implements AdsService {
         List<Ad> ads = adRepository.findByAuthor(userService.getCurrentUser());
         return new AdsDto(ads.size(), adDtoMapper.toDtoList(ads));
     }
+
+    @Override
+    public AdsDto findAdsByTitle(String q) {
+        List<Ad> ads = adRepository.findByTitleLikeIgnoreCase(q);
+        return new AdsDto(ads.size(), adDtoMapper.toDtoList(ads));
+    }
 }
