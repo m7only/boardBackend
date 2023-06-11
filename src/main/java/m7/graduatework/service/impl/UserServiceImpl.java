@@ -11,6 +11,7 @@ import m7.graduatework.mapper.UserDtoMapper;
 import m7.graduatework.mapper.UserRegisterDtoMapper;
 import m7.graduatework.repository.UserRepository;
 import m7.graduatework.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,13 +25,15 @@ public class UserServiceImpl implements UserService {
     private final UserRegisterDtoMapper userRegisterDtoMapper;
     private final UserDtoMapper userDtoMapper;
     private final HttpServletRequest httpServletRequest;
+    private final PasswordEncoder passwordEncoder;
 
 
-    public UserServiceImpl(UserRepository userRepository, UserRegisterDtoMapper userRegisterDtoMapper, UserDtoMapper userDtoMapper, HttpServletRequest httpServletRequest) {
+    public UserServiceImpl(UserRepository userRepository, UserRegisterDtoMapper userRegisterDtoMapper, UserDtoMapper userDtoMapper, HttpServletRequest httpServletRequest, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userRegisterDtoMapper = userRegisterDtoMapper;
         this.userDtoMapper = userDtoMapper;
         this.httpServletRequest = httpServletRequest;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -86,15 +89,21 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         user.setRole(Role.USER);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     @Override
     public boolean login(UserLoginDto userLoginDTO) {
-        return userRepository
-                .findByUsernameAndPassword(
-                        userLoginDTO.getUsername(),
-                        userLoginDTO.getPassword())
-                .isPresent();
+        Optional<User> optionalUser = findByUsername(userLoginDTO.getUsername());
+        if (optionalUser.isEmpty()) {
+            return false;
+        }
+        return passwordEncoder.matches(userLoginDTO.getPassword(), optionalUser.get().getPassword());
+//        return userRepository
+//                .findByUsernameAndPassword(
+//                        userLoginDTO.getUsername(),
+//                        userLoginDTO.getPassword())
+//                .isPresent();
     }
 }
