@@ -14,7 +14,7 @@ public class CommentDto {
     @NotNull
     private Long pk;
     @NotEmpty
-    private String createdAt;
+    private Long createdAt;
     @NotEmpty
     private String text;
 }

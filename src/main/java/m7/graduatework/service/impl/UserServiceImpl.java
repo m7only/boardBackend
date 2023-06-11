@@ -23,8 +23,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserRegisterDtoMapper userRegisterDtoMapper;
     private final UserDtoMapper userDtoMapper;
-
     private final HttpServletRequest httpServletRequest;
+
 
     public UserServiceImpl(UserRepository userRepository, UserRegisterDtoMapper userRegisterDtoMapper, UserDtoMapper userDtoMapper, HttpServletRequest httpServletRequest) {
         this.userRepository = userRepository;
@@ -34,10 +34,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository
-                .findByUsername(username)
-                .orElse(null);
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
@@ -59,10 +57,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getCurrentUser() {
         Principal principal = httpServletRequest.getUserPrincipal();
-        if (principal == null) {
-            return null;
-        }
-        return userRepository.findByUsername(principal.getName()).orElse(null);
+        return principal != null
+                ? userRepository.findByUsername(principal.getName()).orElse(null)
+                : null;
     }
 
     @Override

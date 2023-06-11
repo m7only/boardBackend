@@ -35,7 +35,7 @@ public class CommentController {
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
     public ResponseEntity<CommentsDto> getComments(@PathVariable(value = "id") @NotEmpty Long adId) {
-        return ResponseEntity.of(commentService.getComments(adId));
+        return ResponseEntity.ofNullable(commentService.getComments(adId));
     }
 
     @PostMapping("/{id}/comments")

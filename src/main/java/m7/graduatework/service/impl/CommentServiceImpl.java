@@ -43,19 +43,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Optional<CommentsDto> getComments(Long adId) {
+    public CommentsDto getComments(Long adId) {
         Ad ad = adsService.getAdById(adId);
-        return Optional.of(
-                new CommentsDto(
-                        ad.getComments().size(),
-                        commentDtoMapper.toDtoList(ad.getComments().stream().toList())
-                ));
+        return new CommentsDto(
+                ad.getComments().size(),
+                commentDtoMapper.toDtoList(ad.getComments().stream().toList())
+        );
     }
 
     @Override
     public Long deleteComment(Long adId, Long id) {
         if (commentRepository.findByIdAndAd_Id(id, adId).isPresent()) {
-            return commentRepository.removeById(id);
+            commentRepository.removeById(id);
+            return id;
         }
         return null;
     }

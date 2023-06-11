@@ -13,11 +13,11 @@ import java.util.Optional;
 public interface AdsService {
     Path updateAdsImage(Long id, MultipartFile image);
 
-    Optional<AdDto> addAds(CreateOrUpdateAdDto properties, MultipartFile image);
+    AdDto addAds(CreateOrUpdateAdDto properties, MultipartFile image);
 
-    Optional<AdsDto> getAds();
+    AdsDto getAds();
 
-    Optional<FullAdDto> getFullAd(Long id);
+    FullAdDto getFullAd(Long id);
 
     Ad getAdById(Long id);
 
@@ -25,5 +25,5 @@ public interface AdsService {
 
     Optional<AdDto> updateAd(Long id, CreateOrUpdateAdDto createOrUpdateAdDto);
 
-    Optional<AdsDto> getAdsMe();
+    AdsDto getAdsMe();
 }

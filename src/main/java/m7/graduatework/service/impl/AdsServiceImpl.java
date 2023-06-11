@@ -41,21 +41,21 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public Optional<AdDto> addAds(CreateOrUpdateAdDto properties, MultipartFile image) {
+    public AdDto addAds(CreateOrUpdateAdDto properties, MultipartFile image) {
         Ad ad = createOrUpdateAdsDtoMapper.toEntity(properties);
         ad.setAuthor(userService.getCurrentUser());
-        return Optional.of(adDtoMapper.toDto(adRepository.save(ad)));
+        return adDtoMapper.toDto(adRepository.save(ad));
     }
 
     @Override
-    public Optional<AdsDto> getAds() {
+    public AdsDto getAds() {
         List<Ad> ads = adRepository.findAll();
-        return Optional.of(new AdsDto(ads.size(), adDtoMapper.toDtoList(ads)));
+        return new AdsDto(ads.size(), adDtoMapper.toDtoList(ads));
     }
 
     @Override
-    public Optional<FullAdDto> getFullAd(Long id) {
-        return Optional.ofNullable(fullAdDtoMapper.toDto(getAdById(id)));
+    public FullAdDto getFullAd(Long id) {
+        return fullAdDtoMapper.toDto(getAdById(id));
     }
 
     @Override
@@ -66,7 +66,8 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public Long removeAds(Long id) {
         if (adRepository.findById(id).isPresent()) {
-            return adRepository.removeById(id);
+            adRepository.removeById(id);
+            return id;
         }
         return null;
     }
@@ -83,8 +84,8 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public Optional<AdsDto> getAdsMe() {
+    public AdsDto getAdsMe() {
         List<Ad> ads = adRepository.findByAuthor(userService.getCurrentUser());
-        return Optional.of(new AdsDto(ads.size(), adDtoMapper.toDtoList(ads)));
+        return new AdsDto(ads.size(), adDtoMapper.toDtoList(ads));
     }
 }

@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface CommentService {
     Optional<CommentDto> addComment(Long adPk, CommentTextDto commentTextDto);
 
-    Optional<CommentsDto> getComments(Long adId);
+    CommentsDto getComments(Long adId);
 
     Long deleteComment(Long adPk, Long id);
 

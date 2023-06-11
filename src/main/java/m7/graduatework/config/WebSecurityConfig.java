@@ -41,17 +41,19 @@ public class WebSecurityConfig {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests((requests) -> requests
-                                .requestMatchers(PERMIT_ALL).permitAll()
-                                .requestMatchers(PERMIT_AUTHENTICATED).permitAll()
-//                        .requestMatchers(PERMIT_AUTHENTICATED).authenticated()
-                                .anyRequest().permitAll()
+                        .requestMatchers(PERMIT_ALL).permitAll()
+                        .requestMatchers(PERMIT_AUTHENTICATED).authenticated()
                 );
-
         return http.build();
     }
+
+//    @Bean
+//    public PasswordEncoder encoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
     @Autowired
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
