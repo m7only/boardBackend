@@ -13,5 +13,5 @@ public interface CommentService {
 
     Long deleteComment(Long adPk, Long id);
 
-    Optional<CommentDto> updateComment(Long adPk, Long id, CommentDto commentDto);
+    Optional<CommentDto> updateComment(Long adPk, Long id, CommentTextDto commentTextDto);
 }

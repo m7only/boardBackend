@@ -57,20 +57,20 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Long deleteComment(Long adId, Long id) {
         if (commentRepository.findByIdAndAd_Id(id, adId).isPresent()) {
-            commentRepository.removeById(id);
+            commentRepository.deleteById(id);
             return id;
         }
         return null;
     }
 
     @Override
-    public Optional<CommentDto> updateComment(Long adId, Long id, CommentDto commentDto) {
+    public Optional<CommentDto> updateComment(Long adId, Long id, CommentTextDto commentTextDto) {
         Optional<Comment> commentOptional = commentRepository.findById(id);
         if (commentOptional.isEmpty()) {
             return Optional.empty();
         }
         Comment comment = commentOptional.get();
-        commentDtoMapper.updateEntityFromDto(commentDto, comment);
+        commentTextDtoMapper.updateEntityFromDto(commentTextDto, comment);
         return Optional.of(commentDtoMapper.toDto(commentRepository.save(comment)));
     }
 }

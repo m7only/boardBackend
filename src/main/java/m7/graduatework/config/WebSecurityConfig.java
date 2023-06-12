@@ -26,6 +26,7 @@ public class WebSecurityConfig {
     };
     private static final String[] PERMIT_AUTHENTICATED = {
             "/ads/**",
+            "/comments/**",
             "/users/**"
     };
     private final UserDetailsService userDetailsService;

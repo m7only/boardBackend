@@ -71,7 +71,7 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public Long removeAds(Long id) {
         if (adRepository.findById(id).isPresent()) {
-            adRepository.removeById(id);
+            adRepository.deleteById(id);
             return id;
         }
         return null;

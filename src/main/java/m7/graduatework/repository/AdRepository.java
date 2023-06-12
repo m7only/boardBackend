@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface AdRepository extends JpaRepository<Ad, Long> {
     List<Ad> findByAuthor(User user);
-    void removeById(Long id);
+
+    void deleteById(Long id);
+
     List<Ad> findByTitleLikeIgnoreCase(String title);
 }

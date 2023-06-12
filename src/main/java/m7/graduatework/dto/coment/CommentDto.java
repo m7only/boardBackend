@@ -13,7 +13,7 @@ public class CommentDto {
     private String authorFirstName;
     @NotNull
     private Long pk;
-    @NotEmpty
+    @NotNull
     private Long createdAt;
     @NotEmpty
     private String text;
