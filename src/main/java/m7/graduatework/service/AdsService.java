@@ -7,11 +7,10 @@ import m7.graduatework.dto.ad.FullAdDto;
 import m7.graduatework.entity.Ad;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
 import java.util.Optional;
 
 public interface AdsService {
-    Path updateAdsImage(Long id, MultipartFile image);
+    String updateAdsImage(Long id, MultipartFile image);
 
     AdDto addAds(CreateOrUpdateAdDto properties, MultipartFile image);
 
