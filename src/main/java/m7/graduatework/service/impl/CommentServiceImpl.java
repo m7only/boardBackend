@@ -73,4 +73,9 @@ public class CommentServiceImpl implements CommentService {
         commentTextDtoMapper.updateEntityFromDto(commentTextDto, comment);
         return Optional.of(commentDtoMapper.toDto(commentRepository.save(comment)));
     }
+
+    @Override
+    public Comment getCommentById(Long id) {
+        return commentRepository.findById(id).orElse(null);
+    }
 }
