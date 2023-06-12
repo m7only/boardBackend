@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> findByIdAndAd_Id(Long id, Long adId);
+
     void deleteById(Long id);
 }
