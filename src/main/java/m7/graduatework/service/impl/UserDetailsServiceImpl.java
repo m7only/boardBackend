@@ -1,6 +1,7 @@
 package m7.graduatework.service.impl;
 
 import m7.graduatework.service.UserService;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +18,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userService.findByUsername(username);
+        return userService.findByUsername(username).map(user -> User.builder()
+                        .username(user.getUsername())
+                        .password(user.getPassword())
+                        .roles(user.getRole().getAuthority())
+                        .build())
+                .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 }

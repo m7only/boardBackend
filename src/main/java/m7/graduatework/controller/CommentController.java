@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import m7.graduatework.dto.coment.CommentDto;
 import m7.graduatework.dto.coment.CommentTextDto;
@@ -34,8 +33,8 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "Данные получены"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
-    public ResponseEntity<CommentsDto> getComments(@PathVariable(value = "id") @NotEmpty Long adId) {
-        return ResponseEntity.of(commentService.getComments(adId));
+    public ResponseEntity<CommentsDto> getComments(@PathVariable(value = "id") @NotNull Long adId) {
+        return ResponseEntity.ofNullable(commentService.getComments(adId));
     }
 
     @PostMapping("/{id}/comments")
@@ -44,8 +43,9 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "Комментарий добавлен"),
             @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
-    public ResponseEntity<CommentDto> addComment(@PathVariable(value = "id") @NotEmpty Long adId,
-                                                 @RequestBody @Valid CommentTextDto commentTextDto) {
+    public ResponseEntity<CommentDto> addComment(@PathVariable(value = "id") @NotNull Long adId,
+                                                 @RequestBody CommentTextDto commentTextDto) {
+        System.out.println(commentTextDto.getText());
         return ResponseEntity.of(commentService.addComment(adId, commentTextDto));
     }
 
@@ -57,7 +57,7 @@ public class CommentController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации"),
             @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
-    public ResponseEntity<Void> deleteComment(@PathVariable(value = "adId") @NotEmpty Long adId,
+    public ResponseEntity<Void> deleteComment(@PathVariable(value = "adId") @NotNull Long adId,
                                               @PathVariable @NotNull Long id) {
         return commentService.deleteComment(adId, id) != null
                 ? ResponseEntity.ok().build()
@@ -71,9 +71,9 @@ public class CommentController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации"),
             @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
-    public ResponseEntity<CommentDto> updateComment(@PathVariable(value = "adId") @NotEmpty Long adId,
+    public ResponseEntity<CommentDto> updateComment(@PathVariable(value = "adId") @NotNull Long adId,
                                                     @PathVariable @NotNull Long id,
-                                                    @RequestBody @Valid CommentDto commentDto) {
-        return ResponseEntity.of(commentService.updateComment(adId, id, commentDto));
+                                                    @RequestBody @Valid CommentTextDto commentTextDto) {
+        return ResponseEntity.of(commentService.updateComment(adId, id, commentTextDto));
     }
 }

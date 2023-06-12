@@ -22,7 +22,10 @@ public class CommentServiceImpl implements CommentService {
     private final CommentTextDtoMapper commentTextDtoMapper;
     private final CommentDtoMapper commentDtoMapper;
 
-    public CommentServiceImpl(CommentRepository commentRepository, CommentTextDtoMapper commentTextDtoMapper, AdsService adsService, CommentDtoMapper commentDtoMapper) {
+    public CommentServiceImpl(CommentRepository commentRepository,
+                              CommentTextDtoMapper commentTextDtoMapper,
+                              AdsService adsService,
+                              CommentDtoMapper commentDtoMapper) {
         this.commentRepository = commentRepository;
         this.commentTextDtoMapper = commentTextDtoMapper;
         this.adsService = adsService;
@@ -43,31 +46,31 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Optional<CommentsDto> getComments(Long adId) {
+    public CommentsDto getComments(Long adId) {
         Ad ad = adsService.getAdById(adId);
-        return Optional.of(
-                new CommentsDto(
-                        ad.getComments().size(),
-                        commentDtoMapper.toDtoList(ad.getComments().stream().toList())
-                ));
+        return new CommentsDto(
+                ad.getComments().size(),
+                commentDtoMapper.toDtoList(ad.getComments().stream().toList())
+        );
     }
 
     @Override
     public Long deleteComment(Long adId, Long id) {
         if (commentRepository.findByIdAndAd_Id(id, adId).isPresent()) {
-            return commentRepository.removeById(id);
+            commentRepository.deleteById(id);
+            return id;
         }
         return null;
     }
 
     @Override
-    public Optional<CommentDto> updateComment(Long adId, Long id, CommentDto commentDto) {
+    public Optional<CommentDto> updateComment(Long adId, Long id, CommentTextDto commentTextDto) {
         Optional<Comment> commentOptional = commentRepository.findById(id);
         if (commentOptional.isEmpty()) {
             return Optional.empty();
         }
         Comment comment = commentOptional.get();
-        commentDtoMapper.updateEntityFromDto(commentDto, comment);
+        commentTextDtoMapper.updateEntityFromDto(commentTextDto, comment);
         return Optional.of(commentDtoMapper.toDto(commentRepository.save(comment)));
     }
 }

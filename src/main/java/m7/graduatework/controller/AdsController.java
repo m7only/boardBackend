@@ -43,7 +43,17 @@ public class AdsController {
             @ApiResponse(responseCode = "200", description = "Результат запроса получен")
     })
     public ResponseEntity<AdsDto> getAds() {
-        return ResponseEntity.of(adsService.getAds());
+        return ResponseEntity.ofNullable(adsService.getAds());
+    }
+
+    @GetMapping("/search/{q}")
+    @Operation(summary = "Поиск по заголовку объявления")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Объявление добавлено"),
+            @ApiResponse(responseCode = "404", description = "Данные не найдены")
+    })
+    public ResponseEntity<AdsDto> findAdsByTitle(@PathVariable String q) {
+        return ResponseEntity.ofNullable(adsService.findAdsByTitle(q));
     }
 
     @PostMapping(
@@ -59,13 +69,7 @@ public class AdsController {
     })
     public ResponseEntity<AdDto> addAds(@RequestPart(value = "properties") @Valid CreateOrUpdateAdDto properties,
                                         @RequestPart(value = "image") MultipartFile image) {
-        return adsService.addAds(properties, image)
-                .map(dto -> ResponseEntity
-                        .status(HttpStatus.CREATED)
-                        .body(dto))
-                .orElseGet(() -> ResponseEntity
-                        .notFound()
-                        .build());
+        return ResponseEntity.ofNullable(adsService.addAds(properties, image));
     }
 
     @GetMapping("/{id}")
@@ -75,7 +79,7 @@ public class AdsController {
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
     public ResponseEntity<FullAdDto> getFullAd(@PathVariable @NotNull Long id) {
-        return ResponseEntity.of(adsService.getFullAd(id));
+        return ResponseEntity.ofNullable(adsService.getFullAd(id));
     }
 
     @DeleteMapping("/{id}")
@@ -111,7 +115,7 @@ public class AdsController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
     public ResponseEntity<AdsDto> getAdsMe() {
-        return ResponseEntity.of(adsService.getAdsMe());
+        return ResponseEntity.ofNullable(adsService.getAdsMe());
     }
 
     @PatchMapping(
