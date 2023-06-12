@@ -1,6 +1,7 @@
 package m7.graduatework.controller;
 
-import m7.graduatework.service.AdImageService;
+import m7.graduatework.service.AdsService;
+import m7.graduatework.service.UserService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,27 +18,28 @@ import java.nio.file.Path;
 @CrossOrigin(value = "http://localhost:3000")
 public class ImageController {
 
-    private final AdImageService adImageService;
+    private final AdsService adsService;
+    private final UserService userService;
 
-    public ImageController(AdImageService adImageService) {
-        this.adImageService = adImageService;
+    public ImageController(AdsService adsService, UserService userService) {
+        this.adsService = adsService;
+        this.userService = userService;
     }
 
     @GetMapping(value = "/images/ads/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<InputStreamResource> getAdImage(@PathVariable String fileName) throws IOException {
-        Path path = Path.of(adImageService.getPathToAdImageStorage(), fileName);
+        Path path = Path.of(adsService.getPathToAdImageStorageRoot(), adsService.getPathToAdImageStorageFront(), fileName);
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .contentLength(Files.size(path))
                 .body(new InputStreamResource(Files.newInputStream(path)));
     }
-
-//    @GetMapping(value = "/images/avatars/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
-//    public ResponseEntity<InputStreamResource> getUserImage(@PathVariable String fileName) throws IOException {
-//        Path path = Path.of(adsService.getAdsImagesPath(), fileName);
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.IMAGE_JPEG)
-//                .contentLength(Files.size(path))
-//                .body(new InputStreamResource(Files.newInputStream(path)));
-//    }
+    @GetMapping(value = "/images/users/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<InputStreamResource> getUserImage(@PathVariable String fileName) throws IOException {
+        Path path = Path.of(userService.getPathToUsersImageStorageRoot(), userService.getPathToUsersImageStorageFront(), fileName);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .contentLength(Files.size(path))
+                .body(new InputStreamResource(Files.newInputStream(path)));
+    }
 }

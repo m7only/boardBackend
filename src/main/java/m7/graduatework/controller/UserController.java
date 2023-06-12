@@ -64,6 +64,6 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
     public ResponseEntity<UserDto> updateUserImage(@RequestParam MultipartFile image) {
-        return ResponseEntity.of(userService.updateUserImage(image));
+        return ResponseEntity.ofNullable(userService.updateUserImage(image));
     }
 }

@@ -27,4 +27,8 @@ public interface AdsService {
     AdsDto getAdsMe();
 
     AdsDto findAdsByTitle(String q);
+
+    String getPathToAdImageStorageFront();
+
+    String getPathToAdImageStorageRoot();
 }
