@@ -10,6 +10,7 @@ import m7.graduatework.mapper.CommentTextDtoMapper;
 import m7.graduatework.repository.CommentRepository;
 import m7.graduatework.service.AdsService;
 import m7.graduatework.service.CommentService;
+import m7.graduatework.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,16 +20,18 @@ import java.util.Optional;
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final AdsService adsService;
+    private final UserService userService;
     private final CommentTextDtoMapper commentTextDtoMapper;
     private final CommentDtoMapper commentDtoMapper;
 
     public CommentServiceImpl(CommentRepository commentRepository,
                               CommentTextDtoMapper commentTextDtoMapper,
                               AdsService adsService,
-                              CommentDtoMapper commentDtoMapper) {
+                              UserService userService, CommentDtoMapper commentDtoMapper) {
         this.commentRepository = commentRepository;
         this.commentTextDtoMapper = commentTextDtoMapper;
         this.adsService = adsService;
+        this.userService = userService;
         this.commentDtoMapper = commentDtoMapper;
     }
 
@@ -40,7 +43,7 @@ public class CommentServiceImpl implements CommentService {
             return Optional.empty();
         }
         comment.setAd(ad);
-        comment.setAuthor(ad.getAuthor());
+        comment.setAuthor(userService.getCurrentUser());
         comment.setCreatedAt(LocalDateTime.now());
         return Optional.of(commentDtoMapper.toDto(commentRepository.save(comment)));
     }

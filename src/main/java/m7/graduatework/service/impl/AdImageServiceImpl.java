@@ -14,8 +14,6 @@ import java.util.UUID;
 public class AdImageServiceImpl implements AdImageService {
 
     private final FileService fileService;
-    @Value("${path.to.ads.image.storage}")
-    private String pathToAdImageStorage;
     @Value("${path.to.ads.image.storage.front}")
     private String pathToAdImageStorageFront;
     @Value("${path.to.ads.image.root}")
@@ -29,7 +27,7 @@ public class AdImageServiceImpl implements AdImageService {
     public String saveAdImage(MultipartFile image) {
         if (!image.isEmpty()) {
             String fileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(image.getOriginalFilename());
-            Path path = Path.of(pathToAdImageStorage, fileName);
+            Path path = Path.of(pathToAdImageStorageRoot, pathToAdImageStorageFront,fileName);
             fileService.upload(image, path);
             return path.getFileName().toString();
         }
@@ -43,7 +41,7 @@ public class AdImageServiceImpl implements AdImageService {
 
     @Override
     public String getPathToAdImageStorage() {
-        return pathToAdImageStorage;
+        return Path.of(pathToAdImageStorageRoot, pathToAdImageStorageFront).toString();
     }
 
     @Override
