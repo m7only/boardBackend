@@ -45,7 +45,6 @@ public class CommentController {
     })
     public ResponseEntity<CommentDto> addComment(@PathVariable(value = "id") @NotNull Long adId,
                                                  @RequestBody CommentTextDto commentTextDto) {
-        System.out.println(commentTextDto.getText());
         return ResponseEntity.of(commentService.addComment(adId, commentTextDto));
     }
 
