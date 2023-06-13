@@ -11,21 +11,24 @@ import m7.graduatework.dto.ad.AdsDto;
 import m7.graduatework.dto.ad.CreateOrUpdateAdDto;
 import m7.graduatework.dto.ad.FullAdDto;
 import m7.graduatework.service.AdsService;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/ads")
 @CrossOrigin(value = "http://localhost:3000")
 @Validated
 @Tag(name = "Объявления", description = "CRUD объявлений, Secured")
-@EnableMethodSecurity
 public class AdsController {
 
     private final AdsService adsService;
@@ -46,7 +49,7 @@ public class AdsController {
     @GetMapping("/search/{q}")
     @Operation(summary = "Поиск по заголовку объявления")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Объявления найдены"),
+            @ApiResponse(responseCode = "201", description = "Объявление добавлено"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
     public ResponseEntity<AdsDto> findAdsByTitle(@PathVariable String q) {
@@ -86,7 +89,6 @@ public class AdsController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации"),
             @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
     })
-    @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
     public ResponseEntity<Void> removeAd(@PathVariable @NotNull Long id) {
         return adsService.removeAds(id) != null
                 ? ResponseEntity.noContent().build()
@@ -101,8 +103,7 @@ public class AdsController {
             @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
-    @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
-    public ResponseEntity<AdDto> updateAd(@PathVariable("id") @NotNull Long id,
+    public ResponseEntity<AdDto> updateAd(@PathVariable @NotNull Long id,
                                           @RequestBody @Valid CreateOrUpdateAdDto createOrUpdateAdDTO) {
         return ResponseEntity.of(adsService.updateAd(id, createOrUpdateAdDTO));
     }
@@ -118,21 +119,23 @@ public class AdsController {
     }
 
     @PatchMapping(
-            value = "/{id}/image",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+            value = "/image/{id}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     @Operation(summary = "Обновить изображение объявления")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Изображение обновлено"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
-    @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
-    public ResponseEntity<String> updateAdsImage(@PathVariable @NotNull Long id,
-                                                 @RequestParam MultipartFile image) {
-        String link = adsService.updateAdsImage(id, image);
-        return link != null
-                ? ResponseEntity.ok(link)
+    public ResponseEntity<InputStreamResource> updateAdsImage(@PathVariable @NotNull Long id,
+                                                              @RequestParam MultipartFile image) throws IOException {
+        Path path = adsService.updateAdsImage(id, image);
+        return path != null
+                ? ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(Files.size(path))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + path.getFileName().toString())
+                .body(new InputStreamResource(Files.newInputStream(path)))
                 : ResponseEntity.notFound().build();
     }
 }
