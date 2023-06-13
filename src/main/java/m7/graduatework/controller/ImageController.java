@@ -34,7 +34,6 @@ public class ImageController {
                 .contentLength(Files.size(path))
                 .body(new InputStreamResource(Files.newInputStream(path)));
     }
-
     @GetMapping(value = "/images/users/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<InputStreamResource> getUserImage(@PathVariable String fileName) throws IOException {
         Path path = Path.of(userService.getPathToUsersImageStorageRoot(), userService.getPathToUsersImageStorageFront(), fileName);

@@ -20,6 +20,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/ads")
 @CrossOrigin(value = "http://localhost:3000")
@@ -46,7 +48,7 @@ public class AdsController {
     @GetMapping("/search/{q}")
     @Operation(summary = "Поиск по заголовку объявления")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Объявления найдены"),
+            @ApiResponse(responseCode = "201", description = "Объявление добавлено"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
     public ResponseEntity<AdsDto> findAdsByTitle(@PathVariable String q) {
@@ -129,7 +131,7 @@ public class AdsController {
     })
     @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
     public ResponseEntity<String> updateAdsImage(@PathVariable @NotNull Long id,
-                                                 @RequestParam MultipartFile image) {
+                                                 @RequestParam MultipartFile image){
         String link = adsService.updateAdsImage(id, image);
         return link != null
                 ? ResponseEntity.ok(link)
