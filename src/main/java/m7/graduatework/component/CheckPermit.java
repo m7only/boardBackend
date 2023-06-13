@@ -29,7 +29,6 @@ public class CheckPermit {
     public boolean isAdmin(Authentication authentication) {
         return authentication.getAuthorities().contains(Role.ADMIN);
     }
-
     public boolean isOwner(Authentication authentication, String username) {
         return authentication.getName().equals(username);
     }
