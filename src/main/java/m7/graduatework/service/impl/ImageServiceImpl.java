@@ -1,7 +1,7 @@
 package m7.graduatework.service.impl;
 
-import m7.graduatework.service.ImageService;
 import m7.graduatework.service.FileService;
+import m7.graduatework.service.ImageService;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +22,7 @@ public class ImageServiceImpl implements ImageService {
     public String saveImage(MultipartFile image, String pathToImageStorageRoot, String pathToImageStorageFront) {
         if (!image.isEmpty()) {
             String fileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(image.getOriginalFilename());
-            Path path = Path.of(pathToImageStorageRoot, pathToImageStorageFront,fileName);
+            Path path = Path.of(pathToImageStorageRoot, pathToImageStorageFront, fileName);
             fileService.upload(image, path);
             return path.getFileName().toString();
         }
