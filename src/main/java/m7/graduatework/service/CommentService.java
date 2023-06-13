@@ -3,7 +3,6 @@ package m7.graduatework.service;
 import m7.graduatework.dto.coment.CommentDto;
 import m7.graduatework.dto.coment.CommentTextDto;
 import m7.graduatework.dto.coment.CommentsDto;
-import m7.graduatework.entity.Comment;
 
 import java.util.Optional;
 
@@ -15,6 +14,4 @@ public interface CommentService {
     Long deleteComment(Long adPk, Long id);
 
     Optional<CommentDto> updateComment(Long adPk, Long id, CommentTextDto commentTextDto);
-
-    Comment getCommentById(Long id);
 }

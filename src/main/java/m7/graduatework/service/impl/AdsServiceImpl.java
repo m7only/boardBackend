@@ -10,60 +10,44 @@ import m7.graduatework.mapper.CreateOrUpdateAdsDTOMapper;
 import m7.graduatework.mapper.FullAdDtoMapper;
 import m7.graduatework.repository.AdRepository;
 import m7.graduatework.service.AdsService;
-import m7.graduatework.service.ImageService;
 import m7.graduatework.service.UserService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AdsServiceImpl implements AdsService {
+
     private final CreateOrUpdateAdsDTOMapper createOrUpdateAdsDtoMapper;
     private final AdDtoMapper adDtoMapper;
     private final FullAdDtoMapper fullAdDtoMapper;
     private final AdRepository adRepository;
     private final UserService userService;
-    private final ImageService imageService;
-    @Value("${path.to.ads.image.storage.front}")
-    private String pathToAdImageStorageFront;
-    @Value("${path.to.ads.image.root}")
-    private String pathToAdImageStorageRoot;
 
     public AdsServiceImpl(CreateOrUpdateAdsDTOMapper createOrUpdateAdsDtoMapper,
                           AdRepository adRepository,
                           UserService userService,
                           AdDtoMapper adDtoMapper,
-                          FullAdDtoMapper fullAdDtoMapper,
-                          ImageService imageService) {
+                          FullAdDtoMapper fullAdDtoMapper) {
         this.createOrUpdateAdsDtoMapper = createOrUpdateAdsDtoMapper;
         this.adRepository = adRepository;
         this.userService = userService;
         this.adDtoMapper = adDtoMapper;
         this.fullAdDtoMapper = fullAdDtoMapper;
-        this.imageService = imageService;
     }
 
     @Override
-    public String updateAdsImage(Long id, MultipartFile image) {
-        Optional<Ad> optionalAd = adRepository.findById(id);
-        if (optionalAd.isEmpty()) {
-            return null;
-        }
-        Ad ad = optionalAd.get();
-        imageService.deleteImage(pathToAdImageStorageRoot, ad.getImage());
-        ad.setImage(pathToAdImageStorageFront + imageService.saveImage(image, pathToAdImageStorageRoot, pathToAdImageStorageFront));
-        adRepository.save(ad);
-        return ad.getImage();
+    public Path updateAdsImage(Long id, MultipartFile image) {
+        return Path.of("/");
     }
 
     @Override
     public AdDto addAds(CreateOrUpdateAdDto properties, MultipartFile image) {
         Ad ad = createOrUpdateAdsDtoMapper.toEntity(properties);
         ad.setAuthor(userService.getCurrentUser());
-        ad.setImage(pathToAdImageStorageFront + imageService.saveImage(image, pathToAdImageStorageRoot, pathToAdImageStorageFront));
         return adDtoMapper.toDto(adRepository.save(ad));
     }
 
@@ -86,10 +70,8 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public Long removeAds(Long id) {
-        Optional<Ad> optionalAd = adRepository.findById(id);
-        if (optionalAd.isPresent()) {
+        if (adRepository.findById(id).isPresent()) {
             adRepository.deleteById(id);
-            imageService.deleteImage(pathToAdImageStorageRoot, optionalAd.get().getImage());
             return id;
         }
         return null;
@@ -116,15 +98,5 @@ public class AdsServiceImpl implements AdsService {
     public AdsDto findAdsByTitle(String q) {
         List<Ad> ads = adRepository.findByTitleLikeIgnoreCase(q);
         return new AdsDto(ads.size(), adDtoMapper.toDtoList(ads));
-    }
-
-    @Override
-    public String getPathToAdImageStorageFront() {
-        return pathToAdImageStorageFront;
-    }
-
-    @Override
-    public String getPathToAdImageStorageRoot() {
-        return pathToAdImageStorageRoot;
     }
 }

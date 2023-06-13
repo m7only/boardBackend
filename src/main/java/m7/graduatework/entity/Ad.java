@@ -15,6 +15,7 @@ import java.util.Set;
 @ToString
 @Table(name = "ads")
 public class Ad {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

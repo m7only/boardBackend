@@ -20,13 +20,9 @@ public interface UserService {
 
     Optional<UserDto> updateUser(UserDto userDto);
 
-    UserDto updateUserImage(MultipartFile image);
+    Optional<UserDto> updateUserImage(MultipartFile image);
 
     User register(UserRegisterDto userRegisterDto);
 
     boolean login(UserLoginDto userLoginDto);
-
-    String getPathToUsersImageStorageFront();
-
-    String getPathToUsersImageStorageRoot();
 }
