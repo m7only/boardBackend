@@ -22,17 +22,16 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @Value("${path.to.users.image.storage.front}")
-    private String pathToUsersImageStorageFront;
-    @Value("${path.to.users.image.root}")
-    private String pathToUsersImageStorageRoot;
-
     private final UserRepository userRepository;
     private final UserRegisterDtoMapper userRegisterDtoMapper;
     private final UserDtoMapper userDtoMapper;
     private final HttpServletRequest httpServletRequest;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
+    @Value("${path.to.users.image.storage.front}")
+    private String pathToUsersImageStorageFront;
+    @Value("${path.to.users.image.root}")
+    private String pathToUsersImageStorageRoot;
 
 
     public UserServiceImpl(UserRepository userRepository, UserRegisterDtoMapper userRegisterDtoMapper, UserDtoMapper userDtoMapper, HttpServletRequest httpServletRequest, PasswordEncoder passwordEncoder, ImageService imageService) {

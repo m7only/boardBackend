@@ -9,8 +9,8 @@ import m7.graduatework.mapper.AdDtoMapper;
 import m7.graduatework.mapper.CreateOrUpdateAdsDTOMapper;
 import m7.graduatework.mapper.FullAdDtoMapper;
 import m7.graduatework.repository.AdRepository;
-import m7.graduatework.service.ImageService;
 import m7.graduatework.service.AdsService;
+import m7.graduatework.service.ImageService;
 import m7.graduatework.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,17 +21,16 @@ import java.util.Optional;
 
 @Service
 public class AdsServiceImpl implements AdsService {
-    @Value("${path.to.ads.image.storage.front}")
-    private String pathToAdImageStorageFront;
-    @Value("${path.to.ads.image.root}")
-    private String pathToAdImageStorageRoot;
-
     private final CreateOrUpdateAdsDTOMapper createOrUpdateAdsDtoMapper;
     private final AdDtoMapper adDtoMapper;
     private final FullAdDtoMapper fullAdDtoMapper;
     private final AdRepository adRepository;
     private final UserService userService;
     private final ImageService imageService;
+    @Value("${path.to.ads.image.storage.front}")
+    private String pathToAdImageStorageFront;
+    @Value("${path.to.ads.image.root}")
+    private String pathToAdImageStorageRoot;
 
     public AdsServiceImpl(CreateOrUpdateAdsDTOMapper createOrUpdateAdsDtoMapper,
                           AdRepository adRepository,
