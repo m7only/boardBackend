@@ -1,5 +1,3 @@
 databaseChangeLog:
   - include:
       file: liquibase/sql/init.sql
-  - include:
-      file: liquibase/sql/initData.sql
