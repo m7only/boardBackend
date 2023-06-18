@@ -46,7 +46,7 @@ public class CommentController {
     })
     public ResponseEntity<CommentDto> addComment(@PathVariable(value = "id") @NotNull Long adId,
                                                  @RequestBody CommentTextDto commentTextDto) {
-        return ResponseEntity.of(commentService.addComment(adId, commentTextDto));
+        return ResponseEntity.ofNullable(commentService.addComment(adId, commentTextDto));
     }
 
 
@@ -76,6 +76,6 @@ public class CommentController {
     public ResponseEntity<CommentDto> updateComment(@PathVariable(value = "adId") @NotNull Long adId,
                                                     @PathVariable @NotNull Long id,
                                                     @RequestBody @Valid CommentTextDto commentTextDto) {
-        return ResponseEntity.of(commentService.updateComment(adId, id, commentTextDto));
+        return ResponseEntity.ofNullable(commentService.updateComment(adId, id, commentTextDto));
     }
 }

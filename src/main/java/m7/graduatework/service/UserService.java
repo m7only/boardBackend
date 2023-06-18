@@ -14,11 +14,11 @@ public interface UserService {
 
     boolean setUserPassword(PasswordDto passwordDto);
 
-    Optional<UserDto> getCurrentUserDto();
+    UserDto getCurrentUserDto();
 
     User getCurrentUser();
 
-    Optional<UserDto> updateUser(UserDto userDto);
+    UserDto updateUser(UserDto userDto);
 
     UserDto updateUserImage(MultipartFile image);
 

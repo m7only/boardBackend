@@ -7,8 +7,6 @@ import m7.graduatework.dto.ad.FullAdDto;
 import m7.graduatework.entity.Ad;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-
 public interface AdsService {
     String updateAdsImage(Long id, MultipartFile image);
 
@@ -22,7 +20,7 @@ public interface AdsService {
 
     Long removeAds(Long id);
 
-    Optional<AdDto> updateAd(Long id, CreateOrUpdateAdDto createOrUpdateAdDto);
+    AdDto updateAd(Long id, CreateOrUpdateAdDto createOrUpdateAdDto);
 
     AdsDto getAdsMe();
 

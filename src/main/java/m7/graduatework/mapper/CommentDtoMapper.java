@@ -8,7 +8,7 @@ import org.mapstruct.MappingTarget;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -20,12 +20,24 @@ public interface CommentDtoMapper {
     @Mapping(target = "createdAt", source = "createdAt")
     CommentDto toDto(Comment comment);
 
+    /**
+     * Маппинг {@code LocalDateTime} в Unix Time
+     *
+     * @param localDateTime для перевода
+     * @return время в формате Unix Time
+     */
     default Long localDateTimeToLong(LocalDateTime localDateTime) {
-        return localDateTime.toInstant(ZoneOffset.of("+3")).toEpochMilli();
+        return localDateTime.toInstant(ZonedDateTime.now().getOffset()).toEpochMilli();
     }
 
+    /**
+     * Маппинг Unix Time в {@code LocalDateTime}
+     *
+     * @param time Unix Time для перевода
+     * @return время в формате {@code LocalDateTime}
+     */
     default LocalDateTime longToLocalDateTime(Long time) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.of("+3"));
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZonedDateTime.now().getOffset());
     }
 
     @Mapping(target = "author", ignore = true)
