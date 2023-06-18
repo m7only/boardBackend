@@ -27,8 +27,15 @@ public class AdsServiceImpl implements AdsService {
     private final AdRepository adRepository;
     private final UserService userService;
     private final ImageService imageService;
+    /**
+     * Относительный путь к картинке для фронта
+     */
     @Value("${path.to.ads.image.storage.front}")
     private String pathToAdImageStorageFront;
+
+    /**
+     * Путь для хранения картинки относительно корня проекта для бэка
+     */
     @Value("${path.to.ads.image.root}")
     private String pathToAdImageStorageRoot;
 
@@ -46,6 +53,13 @@ public class AdsServiceImpl implements AdsService {
         this.imageService = imageService;
     }
 
+    /**
+     * Изменение изображения в объявлении
+     *
+     * @param id    идентификатор объявления
+     * @param image {@code MultipartFile} файл изображения
+     * @return {@code String} относительный путь к изображению для фронта
+     */
     @Override
     public String updateAdsImage(Long id, MultipartFile image) {
         Optional<Ad> optionalAd = adRepository.findById(id);
@@ -59,6 +73,13 @@ public class AdsServiceImpl implements AdsService {
         return ad.getImage();
     }
 
+    /**
+     * Добавление объявления
+     *
+     * @param properties Dto с данными объявления
+     * @param image      {@code MultipartFile} файл изображения
+     * @return {@code AdDto} созданного объявления
+     */
     @Override
     public AdDto addAds(CreateOrUpdateAdDto properties, MultipartFile image) {
         Ad ad = createOrUpdateAdsDtoMapper.toEntity(properties);
@@ -67,6 +88,11 @@ public class AdsServiceImpl implements AdsService {
         return adDtoMapper.toDto(adRepository.save(ad));
     }
 
+    /**
+     * Получение всех объявлений
+     *
+     * @return {@code AdsDto} Dto со списком всех объявлений
+     */
     @Override
     public AdsDto getAds() {
         List<Ad> ads = adRepository.findAll();
@@ -74,16 +100,34 @@ public class AdsServiceImpl implements AdsService {
         return new AdsDto(ads.size(), adDtoMapper.toDtoList(ads));
     }
 
+    /**
+     * Получение всех данных объявления
+     *
+     * @param id идентификатор объявления
+     * @return {@code FullAdDto} Dto со всеми данными объявления
+     */
     @Override
     public FullAdDto getFullAd(Long id) {
         return fullAdDtoMapper.toDto(getAdById(id));
     }
 
+    /**
+     * Получение объявления по идентификатору
+     *
+     * @param id идентификатор объявления
+     * @return {@link Ad} объявление, {@code null} - если не найдено
+     */
     @Override
     public Ad getAdById(Long id) {
         return adRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Удаление объявления по идентификатору
+     *
+     * @param id идентификатор объявления
+     * @return идентификатор удаленного объявления, {@code null} - если объявление не найдено
+     */
     @Override
     public Long removeAds(Long id) {
         Optional<Ad> optionalAd = adRepository.findById(id);
@@ -95,23 +139,41 @@ public class AdsServiceImpl implements AdsService {
         return null;
     }
 
+    /**
+     * Обновление объявления по идентификатору
+     *
+     * @param id                  идентификатор объявления
+     * @param createOrUpdateAdDTO Dto с обновленными данными объявления
+     * @return {@code AdDto} Dto обновленного объявления, {@code null} - если объявление не найдено
+     */
     @Override
-    public Optional<AdDto> updateAd(Long id, CreateOrUpdateAdDto createOrUpdateAdDTO) {
+    public AdDto updateAd(Long id, CreateOrUpdateAdDto createOrUpdateAdDTO) {
         Optional<Ad> optionalAd = adRepository.findById(id);
         if (optionalAd.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
         Ad ad = optionalAd.get();
         createOrUpdateAdsDtoMapper.updateEntityFromDto(createOrUpdateAdDTO, ad);
-        return Optional.of(adDtoMapper.toDto(adRepository.save(ad)));
+        return adDtoMapper.toDto(adRepository.save(ad));
     }
 
+    /**
+     * Получение объявлений текущего аутентифицированного пользователя
+     *
+     * @return {@link AdsDto} Dto со списком объявлений текущего пользователя
+     */
     @Override
     public AdsDto getAdsMe() {
         List<Ad> ads = adRepository.findByAuthor(userService.getCurrentUser());
         return new AdsDto(ads.size(), adDtoMapper.toDtoList(ads));
     }
 
+    /**
+     * Поиск объявлений по заголовку
+     *
+     * @param q поисковый запрос
+     * @return {@link AdsDto} Dto со списком найденных объявлений
+     */
     @Override
     public AdsDto findAdsByTitle(String q) {
         List<Ad> ads = adRepository.findByTitleLikeIgnoreCase(q);

@@ -44,7 +44,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
     public ResponseEntity<UserDto> getUser() {
-        return ResponseEntity.of(userService.getCurrentUserDto());
+        return ResponseEntity.ofNullable(userService.getCurrentUserDto());
     }
 
     @PatchMapping("/me")
@@ -54,7 +54,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации")
     })
     public ResponseEntity<UserDto> updateUser(@RequestBody @Valid UserDto userDTO) {
-        return ResponseEntity.of(userService.updateUser(userDTO));
+        return ResponseEntity.ofNullable(userService.updateUser(userDTO));
     }
 
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -102,7 +102,7 @@ public class AdsController {
     @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
     public ResponseEntity<AdDto> updateAd(@PathVariable("id") @NotNull Long id,
                                           @RequestBody @Valid CreateOrUpdateAdDto createOrUpdateAdDTO) {
-        return ResponseEntity.of(adsService.updateAd(id, createOrUpdateAdDTO));
+        return ResponseEntity.ofNullable(adsService.updateAd(id, createOrUpdateAdDTO));
     }
 
     @GetMapping("/me")

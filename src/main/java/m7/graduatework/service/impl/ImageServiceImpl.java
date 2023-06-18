@@ -18,6 +18,14 @@ public class ImageServiceImpl implements ImageService {
         this.fileService = fileService;
     }
 
+    /**
+     * Сохранение изображения на диск с формированием уникального имени с помощью UUID
+     *
+     * @param image                   {@code MultipartFile} файл изображения
+     * @param pathToImageStorageRoot  путь к хранилищу изображений
+     * @param pathToImageStorageFront путь для формирования относительной ссылки для фронта
+     * @return {@code String} - путь при удачном сохранении изображения, {@code null} - при ошибке сохранения
+     */
     @Override
     public String saveImage(MultipartFile image, String pathToImageStorageRoot, String pathToImageStorageFront) {
         if (!image.isEmpty()) {
@@ -29,6 +37,12 @@ public class ImageServiceImpl implements ImageService {
         return null;
     }
 
+    /**
+     * Удаление изображения с диска
+     *
+     * @param pathToImageStorageRoot путь к хранилищу изображений
+     * @param image                  название файла
+     */
     @Override
     public void deleteImage(String pathToImageStorageRoot, String image) {
         fileService.delete(Path.of(pathToImageStorageRoot, image));

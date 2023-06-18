@@ -28,8 +28,15 @@ public class UserServiceImpl implements UserService {
     private final HttpServletRequest httpServletRequest;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
+    /**
+     * Относительный путь к картинке для фронта
+     */
     @Value("${path.to.users.image.storage.front}")
     private String pathToUsersImageStorageFront;
+
+    /**
+     * Путь для хранения картинки относительно корня проекта для бэка
+     */
     @Value("${path.to.users.image.root}")
     private String pathToUsersImageStorageRoot;
 
@@ -43,11 +50,23 @@ public class UserServiceImpl implements UserService {
         this.imageService = imageService;
     }
 
+    /**
+     * Поиск пользователя по юзернейму (email)
+     *
+     * @param username уникальное имя пользователя (email)
+     * @return {@code Optional<User>}
+     */
     @Override
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
+    /**
+     * Изменения пароля пользователя
+     *
+     * @param passwordDTO {@link PasswordDto DTO для изменения пароля}
+     * @return {@code true} - пароль изменен, {@code false} - пароль не изменен.
+     */
     @Override
     public boolean setUserPassword(PasswordDto passwordDTO) {
         User user = getCurrentUser();
@@ -59,10 +78,24 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    /**
+     * Получение {@link UserDto} текущего (аутентифицированного) пользователя
+     *
+     * @return {@code UserDto} аутентифицированный пользователь,  {@code null} - если получить не удалось
+     */
     @Override
-    public Optional<UserDto> getCurrentUserDto() {
-        return Optional.ofNullable(userDtoMapper.toDto(getCurrentUser()));
+    public UserDto getCurrentUserDto() {
+        User user = getCurrentUser();
+        return user != null
+                ? userDtoMapper.toDto(user)
+                : null;
     }
+
+    /**
+     * Получение текущего аутентифицированного {@link User} пользователя
+     *
+     * @return {@code User} аутентифицированный пользователь, {@code null} - если получить не удалось
+     */
 
     @Override
     public User getCurrentUser() {
@@ -72,18 +105,30 @@ public class UserServiceImpl implements UserService {
                 : null;
     }
 
+    /**
+     * Обновление данных пользователя
+     *
+     * @param userDto Dto пользователя
+     * @return {@code UserDto} с обновленными данными,  {@code null} - если обновить не удалось
+     */
     @Override
-    public Optional<UserDto> updateUser(UserDto userDto) {
+    public UserDto updateUser(UserDto userDto) {
         User userFromDto = userDtoMapper.toEntity(userDto);
         Optional<User> optionalUser = userRepository.findByUsername(userFromDto.getUsername());
         if (optionalUser.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
         User user = optionalUser.get();
         userDtoMapper.updateEntityFromDto(userDto, user);
-        return Optional.of(userDtoMapper.toDto(userRepository.save(user)));
+        return userDtoMapper.toDto(userRepository.save(user));
     }
 
+    /**
+     * Изменение аватарки пользователя. Проверка наличия пользователя, удаление существующей аватарки, сохранение новой.
+     *
+     * @param image {@code MultipartFile} файл аватарки
+     * @return {@code UserDto} с обновленными данными, {@code null} - если обновить не удалось
+     */
     @Override
     public UserDto updateUserImage(MultipartFile image) {
         User user = getCurrentUser();
@@ -96,6 +141,12 @@ public class UserServiceImpl implements UserService {
         return userDtoMapper.toDto(user);
     }
 
+    /**
+     * Регистрация пользователя. Проверка на существование пользователя с таким же username (email). Установка роли {@code USER} по умолчанию
+     *
+     * @param userRegisterDto Dto регистрации пользователя
+     * @return {@code User} если зарегистрирован, {@code null} - если отказано в регистрации
+     */
     @Override
     public User register(UserRegisterDto userRegisterDto) {
         User user = userRegisterDtoMapper.toEntity(userRegisterDto);
@@ -107,6 +158,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    /**
+     * Аутентификация пользователя
+     *
+     * @param userLoginDTO Dto аутентификации
+     * @return {@code true} - аутентификация успешна, {@code false} - в аутентификации  отказано
+     */
     @Override
     public boolean login(UserLoginDto userLoginDTO) {
         Optional<User> optionalUser = findByUsername(userLoginDTO.getUsername());

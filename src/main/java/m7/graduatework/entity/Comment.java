@@ -7,6 +7,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * Класс сущности комментария
+ */
 @Entity
 @Data
 @AllArgsConstructor
@@ -19,17 +22,29 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Дата создания комментария
+     */
     @NotNull
     private LocalDateTime createdAt;
 
+    /**
+     * Текст комментария
+     */
     @NotEmpty
     private String text;
 
+    /**
+     * Автор комментария
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private User author;
 
+    /**
+     * Объявление, к которому написан комментарий
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
