@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 @CrossOrigin(value = "http://localhost:3000")
 @Validated
 @Tag(name = "Объявления", description = "CRUD объявлений, Secured")
-@EnableMethodSecurity
 public class AdsController {
 
     private final AdsService adsService;
@@ -104,7 +102,7 @@ public class AdsController {
     @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
     public ResponseEntity<AdDto> updateAd(@PathVariable("id") @NotNull Long id,
                                           @RequestBody @Valid CreateOrUpdateAdDto createOrUpdateAdDTO) {
-        return ResponseEntity.of(adsService.updateAd(id, createOrUpdateAdDTO));
+        return ResponseEntity.ofNullable(adsService.updateAd(id, createOrUpdateAdDTO));
     }
 
     @GetMapping("/me")

@@ -5,6 +5,7 @@ import m7.graduatework.dto.coment.CommentTextDto;
 import m7.graduatework.dto.coment.CommentsDto;
 import m7.graduatework.entity.Ad;
 import m7.graduatework.entity.Comment;
+import m7.graduatework.entity.User;
 import m7.graduatework.mapper.CommentDtoMapper;
 import m7.graduatework.mapper.CommentTextDtoMapper;
 import m7.graduatework.repository.CommentRepository;
@@ -35,19 +36,33 @@ public class CommentServiceImpl implements CommentService {
         this.commentDtoMapper = commentDtoMapper;
     }
 
+    /**
+     * Добавление комментария. Присвоение комментарию автора, даты и времени создания
+     *
+     * @param adId           идентификатор объявления
+     * @param commentTextDto Dto текста комментария
+     * @return {@code CommentDto} при успешном добавлении, {@code null} - при попытке добавить комментарий к несуществующему объявлению или не аутентифицированным пользователем
+     */
     @Override
-    public Optional<CommentDto> addComment(Long adId, CommentTextDto commentTextDto) {
+    public CommentDto addComment(Long adId, CommentTextDto commentTextDto) {
         Comment comment = commentTextDtoMapper.toEntity(commentTextDto);
         Ad ad = adsService.getAdById(adId);
-        if (ad == null) {
-            return Optional.empty();
+        User user = userService.getCurrentUser();
+        if (ad == null || user == null) {
+            return null;
         }
         comment.setAd(ad);
-        comment.setAuthor(userService.getCurrentUser());
+        comment.setAuthor(user);
         comment.setCreatedAt(LocalDateTime.now());
-        return Optional.of(commentDtoMapper.toDto(commentRepository.save(comment)));
+        return commentDtoMapper.toDto(commentRepository.save(comment));
     }
 
+    /**
+     * Получение комментариев к объявлению
+     *
+     * @param adId идентификатор объявления
+     * @return {@code CommentsDto} - Dto списка комментариев
+     */
     @Override
     public CommentsDto getComments(Long adId) {
         Ad ad = adsService.getAdById(adId);
@@ -57,6 +72,13 @@ public class CommentServiceImpl implements CommentService {
         );
     }
 
+    /**
+     * Удаление комментария по идентификатору объявления и комментария
+     *
+     * @param adId идентификатор объявления
+     * @param id   идентификатор комментария
+     * @return идентификатор удаленного комментария в случае успеха, {@code null} - если комментарий с заданными идентификаторами не найден
+     */
     @Override
     public Long deleteComment(Long adId, Long id) {
         if (commentRepository.findByIdAndAd_Id(id, adId).isPresent()) {
@@ -66,17 +88,31 @@ public class CommentServiceImpl implements CommentService {
         return null;
     }
 
+    /**
+     * Обновление комментария по идентификатору объявления и комментария
+     *
+     * @param adId           идентификатор объявления
+     * @param id             идентификатор комментария
+     * @param commentTextDto Dto текста комментария
+     * @return {@code CommentDto} с обновленным комментарием, {@code null} - если комментарий с заданными идентификаторами не найден
+     */
     @Override
-    public Optional<CommentDto> updateComment(Long adId, Long id, CommentTextDto commentTextDto) {
+    public CommentDto updateComment(Long adId, Long id, CommentTextDto commentTextDto) {
         Optional<Comment> commentOptional = commentRepository.findById(id);
         if (commentOptional.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
         Comment comment = commentOptional.get();
         commentTextDtoMapper.updateEntityFromDto(commentTextDto, comment);
-        return Optional.of(commentDtoMapper.toDto(commentRepository.save(comment)));
+        return commentDtoMapper.toDto(commentRepository.save(comment));
     }
 
+    /**
+     * Получение комментария по идентификатору
+     *
+     * @param id идентификатор комментария
+     * @return {@code Comment} комментарий, {@code null} - если комментарий не найден
+     */
     @Override
     public Comment getCommentById(Long id) {
         return commentRepository.findById(id).orElse(null);
