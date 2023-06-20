@@ -14,7 +14,6 @@ import m7.graduatework.service.AdsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -84,7 +83,6 @@ public class AdsController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации"),
             @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
     })
-    @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
     public ResponseEntity<Void> removeAd(@PathVariable @NotNull Long id) {
         return adsService.removeAds(id) != null
                 ? ResponseEntity.noContent().build()
@@ -99,7 +97,6 @@ public class AdsController {
             @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
-    @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
     public ResponseEntity<AdDto> updateAd(@PathVariable("id") @NotNull Long id,
                                           @RequestBody @Valid CreateOrUpdateAdDto createOrUpdateAdDTO) {
         return ResponseEntity.ofNullable(adsService.updateAd(id, createOrUpdateAdDTO));
@@ -125,7 +122,6 @@ public class AdsController {
             @ApiResponse(responseCode = "200", description = "Изображение обновлено"),
             @ApiResponse(responseCode = "404", description = "Данные не найдены")
     })
-    @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
     public ResponseEntity<String> updateAdsImage(@PathVariable @NotNull Long id,
                                                  @RequestParam MultipartFile image) {
         String link = adsService.updateAdsImage(id, image);

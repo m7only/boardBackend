@@ -12,6 +12,7 @@ import m7.graduatework.repository.CommentRepository;
 import m7.graduatework.service.AdsService;
 import m7.graduatework.service.CommentService;
 import m7.graduatework.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -80,6 +81,7 @@ public class CommentServiceImpl implements CommentService {
      * @return идентификатор удаленного комментария в случае успеха, {@code null} - если комментарий с заданными идентификаторами не найден
      */
     @Override
+    @PreAuthorize("@checkPermit.isCommentOwnerOrAdmin(authentication, #id)")
     public Long deleteComment(Long adId, Long id) {
         if (commentRepository.findByIdAndAd_Id(id, adId).isPresent()) {
             commentRepository.deleteById(id);
@@ -97,6 +99,7 @@ public class CommentServiceImpl implements CommentService {
      * @return {@code CommentDto} с обновленным комментарием, {@code null} - если комментарий с заданными идентификаторами не найден
      */
     @Override
+    @PreAuthorize("@checkPermit.isCommentOwnerOrAdmin(authentication, #id)")
     public CommentDto updateComment(Long adId, Long id, CommentTextDto commentTextDto) {
         Optional<Comment> commentOptional = commentRepository.findById(id);
         if (commentOptional.isEmpty()) {

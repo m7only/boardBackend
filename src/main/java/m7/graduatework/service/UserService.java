@@ -20,7 +20,7 @@ public interface UserService {
 
     UserDto updateUser(UserDto userDto);
 
-    UserDto updateUserImage(MultipartFile image);
+    String updateUserImage(MultipartFile image);
 
     User register(UserRegisterDto userRegisterDto);
 

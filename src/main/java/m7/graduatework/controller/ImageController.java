@@ -29,18 +29,22 @@ public class ImageController {
     @GetMapping(value = "/images/ads/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<InputStreamResource> getAdImage(@PathVariable String fileName) throws IOException {
         Path path = Path.of(adsService.getPathToAdImageStorageRoot(), adsService.getPathToAdImageStorageFront(), fileName);
-        return ResponseEntity.ok()
+        return Files.exists(path)
+                ? ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .contentLength(Files.size(path))
-                .body(new InputStreamResource(Files.newInputStream(path)));
+                .body(new InputStreamResource(Files.newInputStream(path)))
+                : ResponseEntity.notFound().build();
     }
 
     @GetMapping(value = "/images/users/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<InputStreamResource> getUserImage(@PathVariable String fileName) throws IOException {
         Path path = Path.of(userService.getPathToUsersImageStorageRoot(), userService.getPathToUsersImageStorageFront(), fileName);
-        return ResponseEntity.ok()
+        return Files.exists(path)
+                ? ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .contentLength(Files.size(path))
-                .body(new InputStreamResource(Files.newInputStream(path)));
+                .body(new InputStreamResource(Files.newInputStream(path)))
+                : ResponseEntity.notFound().build();
     }
 }

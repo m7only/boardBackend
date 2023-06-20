@@ -70,10 +70,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean setUserPassword(PasswordDto passwordDTO) {
         User user = getCurrentUser();
-        if (!user.getPassword().equals(passwordDTO.getCurrentPassword())) {
+        if (!passwordEncoder.matches(passwordDTO.getCurrentPassword(), user.getPassword())) {
             return false;
         }
-        user.setPassword(passwordDTO.getNewPassword());
+        user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
         userRepository.save(user);
         return true;
     }
@@ -130,15 +130,17 @@ public class UserServiceImpl implements UserService {
      * @return {@code UserDto} с обновленными данными, {@code null} - если обновить не удалось
      */
     @Override
-    public UserDto updateUserImage(MultipartFile image) {
+    public String updateUserImage(MultipartFile image) {
         User user = getCurrentUser();
         if (user == null) {
             return null;
         }
-        imageService.deleteImage(pathToUsersImageStorageRoot, user.getImage());
+        if (user.getImage() != null) {
+            imageService.deleteImage(pathToUsersImageStorageRoot, user.getImage());
+        }
         user.setImage(pathToUsersImageStorageFront + imageService.saveImage(image, pathToUsersImageStorageRoot, pathToUsersImageStorageFront));
         userRepository.save(user);
-        return userDtoMapper.toDto(user);
+        return user.getImage();
     }
 
     /**
