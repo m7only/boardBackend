@@ -11,7 +11,6 @@ import m7.graduatework.dto.coment.CommentTextDto;
 import m7.graduatework.dto.coment.CommentsDto;
 import m7.graduatework.service.CommentService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,7 +56,6 @@ public class CommentController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации"),
             @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
-    @PreAuthorize("@checkPermit.isCommentOwnerOrAdmin(authentication, #id)")
     public ResponseEntity<Void> deleteComment(@PathVariable(value = "adId") @NotNull Long adId,
                                               @PathVariable @NotNull Long id) {
         return commentService.deleteComment(adId, id) != null
@@ -72,7 +70,6 @@ public class CommentController {
             @ApiResponse(responseCode = "401", description = "Нет авторизации"),
             @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
-    @PreAuthorize("@checkPermit.isCommentOwnerOrAdmin(authentication, #id)")
     public ResponseEntity<CommentDto> updateComment(@PathVariable(value = "adId") @NotNull Long adId,
                                                     @PathVariable @NotNull Long id,
                                                     @RequestBody @Valid CommentTextDto commentTextDto) {

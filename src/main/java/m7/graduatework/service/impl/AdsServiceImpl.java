@@ -13,6 +13,7 @@ import m7.graduatework.service.AdsService;
 import m7.graduatework.service.ImageService;
 import m7.graduatework.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,13 +62,16 @@ public class AdsServiceImpl implements AdsService {
      * @return {@code String} относительный путь к изображению для фронта
      */
     @Override
+    @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
     public String updateAdsImage(Long id, MultipartFile image) {
         Optional<Ad> optionalAd = adRepository.findById(id);
         if (optionalAd.isEmpty()) {
             return null;
         }
         Ad ad = optionalAd.get();
-        imageService.deleteImage(pathToAdImageStorageRoot, ad.getImage());
+        if (ad.getImage() != null) {
+            imageService.deleteImage(pathToAdImageStorageRoot, ad.getImage());
+        }
         ad.setImage(pathToAdImageStorageFront + imageService.saveImage(image, pathToAdImageStorageRoot, pathToAdImageStorageFront));
         adRepository.save(ad);
         return ad.getImage();
@@ -129,6 +133,7 @@ public class AdsServiceImpl implements AdsService {
      * @return идентификатор удаленного объявления, {@code null} - если объявление не найдено
      */
     @Override
+    @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
     public Long removeAds(Long id) {
         Optional<Ad> optionalAd = adRepository.findById(id);
         if (optionalAd.isPresent()) {
@@ -147,6 +152,7 @@ public class AdsServiceImpl implements AdsService {
      * @return {@code AdDto} Dto обновленного объявления, {@code null} - если объявление не найдено
      */
     @Override
+    @PreAuthorize("@checkPermit.isAdOwnerOrAdmin(authentication, #id)")
     public AdDto updateAd(Long id, CreateOrUpdateAdDto createOrUpdateAdDTO) {
         Optional<Ad> optionalAd = adRepository.findById(id);
         if (optionalAd.isEmpty()) {
