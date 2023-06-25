@@ -1,5 +1,7 @@
 package m7.graduatework.component;
 
+import m7.graduatework.entity.Ad;
+import m7.graduatework.entity.Comment;
 import m7.graduatework.service.AdsService;
 import m7.graduatework.service.CommentService;
 import org.springframework.security.core.Authentication;
@@ -16,13 +18,21 @@ public class CheckPermit {
     }
 
     public boolean isAdOwnerOrAdmin(Authentication authentication, Long adId) {
+        Ad ad = adsService.getAdById(adId);
+        if (ad == null) {
+            return false;
+        }
         return isAdmin(authentication)
-                || isOwner(authentication, adsService.getAdById(adId).getAuthor().getUsername());
+                || isOwner(authentication, ad.getAuthor().getUsername());
     }
 
     public boolean isCommentOwnerOrAdmin(Authentication authentication, Long commentId) {
+        Comment comment = commentService.getCommentById(commentId);
+        if (comment == null) {
+            return false;
+        }
         return isAdmin(authentication)
-                || isOwner(authentication, commentService.getCommentById(commentId).getAuthor().getUsername());
+                || isOwner(authentication, comment.getAuthor().getUsername());
     }
 
     public boolean isAdmin(Authentication authentication) {
