@@ -1,6 +1,5 @@
 package m7.graduatework.component;
 
-import m7.graduatework.entity.Role;
 import m7.graduatework.service.AdsService;
 import m7.graduatework.service.CommentService;
 import org.springframework.security.core.Authentication;
@@ -27,7 +26,14 @@ public class CheckPermit {
     }
 
     public boolean isAdmin(Authentication authentication) {
-        return authentication.getAuthorities().contains(Role.ADMIN);
+        return authentication
+                .getAuthorities()
+                .stream()
+                .anyMatch(grantedAuthority ->
+                        grantedAuthority
+                                .getAuthority()
+                                .equals("ROLE_ADMIN")
+                );
     }
 
     public boolean isOwner(Authentication authentication, String username) {
