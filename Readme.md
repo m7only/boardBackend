@@ -41,11 +41,11 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8181"
+      - "8080:8080"
     depends_on:
       - service-db
     environment:
-      - SERVER_PORT= 8181
+      - SERVER_PORT= 8080
       - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db/graduate_work
 
   service-db:
@@ -62,7 +62,6 @@ services:
 
 volumes:
   db-data:
-  pgadmin-data:
 ```
 
 ### Исполнители
